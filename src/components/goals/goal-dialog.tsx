@@ -42,7 +42,7 @@ function GoalForm({ clientId, exerciseNames, goal, onSaved }: Props & { onSaved:
       <FormField label="Goal" htmlFor="title" error={e.title}>
         <Input id="title" name="title" defaultValue={goal?.title} placeholder="e.g. Squat 180 by end of October" autoFocus {...a11y("title")} />
       </FormField>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <FormField label="Exercise (optional)" htmlFor="exercise_name" error={e.exercise_name}>
           <Input id="exercise_name" name="exercise_name" list="goal-exercises" defaultValue={goal?.exercise_name ?? ""} autoComplete="off" {...a11y("exercise_name")} />
           <datalist id="goal-exercises">{exerciseNames.map((n) => <option key={n} value={n} />)}</datalist>

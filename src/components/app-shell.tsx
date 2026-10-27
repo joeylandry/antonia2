@@ -55,7 +55,7 @@ function UserMenu({ name, email }: { name: string; email: string }) {
 export function AppShell({ trainer, children }: { trainer: { name: string; email: string }; children: React.ReactNode }) {
   const pathname = usePathname();
   return (
-    <div className="min-h-dvh md:grid md:grid-cols-[15rem_1fr]">
+    <div className="min-h-dvh md:grid md:grid-cols-[15rem_minmax(0,1fr)]">
       <aside className="sticky top-0 hidden h-dvh flex-col border-r bg-subtle p-4 md:flex">
         <Link href="/" className="mb-8 px-2 pt-1"><Brand /></Link>
         <nav aria-label="Main" className="flex flex-1 flex-col gap-1">

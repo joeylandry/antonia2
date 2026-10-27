@@ -21,7 +21,7 @@ export function SessionCard({ session, editable = true }: { session: SessionWith
       </div>
       <ul className="divide-y">
         {session.session_entries.map((e) => (
-          <li key={e.id} className="grid gap-x-6 gap-y-1 px-5 py-3 sm:grid-cols-[minmax(0,14rem)_1fr]">
+          <li key={e.id} className="grid grid-cols-1 gap-x-6 gap-y-1 px-5 py-3 sm:grid-cols-[minmax(0,14rem)_1fr]">
             <div>
               <p className="font-medium">{e.exercise.name}</p>
               <p className="text-sm text-muted-foreground">{summarizeSets(e.entry_sets, e.per_side)}</p>
