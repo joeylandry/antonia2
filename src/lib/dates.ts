@@ -1,4 +1,4 @@
-import { format, parseISO, differenceInCalendarDays } from "date-fns";
+import { addDays, format, parseISO, differenceInCalendarDays } from "date-fns";
 
 /** "Today" as YYYY-MM-DD in the trainer's timezone (server clocks run in UTC). */
 export function todayISO(now: Date = new Date(), timeZone = process.env.APP_TIMEZONE ?? "America/New_York"): string {
@@ -25,4 +25,8 @@ export function relativeDays(days: number): string {
   if (days === 1) return "tomorrow";
   if (days === -1) return "yesterday";
   return days > 0 ? `in ${days} days` : `${-days} days ago`;
+}
+
+export function addDaysISO(iso: string, days: number): string {
+  return format(addDays(parseISO(iso), days), "yyyy-MM-dd");
 }
