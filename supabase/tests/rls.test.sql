@@ -36,6 +36,7 @@ select public.save_session((select id from public.sessions where session_date = 
   '[{"exercise_id":"e1000000-0000-0000-0000-000000000001","sets":[{"reps":8,"weight":40}]}]'::jsonb);
 select pg_temp.assert((select count(*) from public.entry_sets) = 3, 'edit replaced sets, not appended');
 select pg_temp.assert((select max(weight) from public.entry_sets) = 40, 'edited weight stored');
+select pg_temp.assert((select last_session_date from public.client_overview) = '2026-10-09' and (select session_count from public.client_overview) = 2, 'client overview summarises sessions');
 
 -- Trainer B cannot see or touch A's data -------------------------------------------------------
 set request.jwt.claim.sub = 'bbbbbbbb-0000-0000-0000-000000000002';
@@ -43,6 +44,7 @@ select pg_temp.assert((select count(*) from public.clients) = 0, 'B sees no clie
 select pg_temp.assert((select count(*) from public.sessions) = 0, 'B sees no sessions');
 select pg_temp.assert((select count(*) from public.entry_sets) = 0, 'B sees no sets');
 select pg_temp.assert((select count(*) from public.exercise_progress) = 0, 'B sees no progress rows');
+select pg_temp.assert((select count(*) from public.client_overview) = 0, 'B sees no client overview rows');
 select pg_temp.assert((select count(*) from public.trainer_profiles) = 1, 'B sees only own profile');
 
 update public.clients set full_name = 'hijacked';
