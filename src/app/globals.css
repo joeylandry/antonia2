@@ -1,0 +1,164 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/fraunces";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design tokens.
+ * Light: warm lavender-tinted paper, navy ink, dusty-purple accent.
+ * Dark: deep navy surfaces, slate borders, soft lavender accent.
+ * Every foreground/background pair below meets WCAG AA (4.5:1) for body text.
+ */
+:root {
+  --background: #f6f5f9;
+  --foreground: #1b2033;
+  --card: #ffffff;
+  --card-foreground: #1b2033;
+  --popover: #ffffff;
+  --popover-foreground: #1b2033;
+  --muted: #eeecf4;
+  --muted-foreground: #5a6179;
+  --subtle: #f0eef6;
+  --border: #e0ddea;
+  --input: #cfcbdc;
+  --primary: #5b4b8a;
+  --primary-foreground: #ffffff;
+  --primary-hover: #4d3f78;
+  --accent: #e9e5f4;
+  --accent-foreground: #3d3166;
+  --ring: #7a6aad;
+  --success: #2f6b52;
+  --success-subtle: #e3f1ea;
+  --warning: #8a5a14;
+  --warning-subtle: #f8eedb;
+  --destructive: #a43a52;
+  --destructive-subtle: #f9e4e9;
+
+  --chart-1: #5b4b8a;
+  --chart-2: #4f6f9f;
+  --chart-3: #b0728f;
+  --chart-4: #4f8a70;
+  --chart-5: #b08a4a;
+  --chart-grid: #e6e3ef;
+
+  --radius: 0.5rem;
+  --shadow-sm: 0 1px 2px rgb(27 32 51 / 0.05);
+  --shadow-md: 0 4px 16px rgb(27 32 51 / 0.08);
+}
+
+.dark {
+  --background: #0e1320;
+  --foreground: #e8eaf2;
+  --card: #151b2b;
+  --card-foreground: #e8eaf2;
+  --popover: #1a2133;
+  --popover-foreground: #e8eaf2;
+  --muted: #1b2234;
+  --muted-foreground: #9ba5bb;
+  --subtle: #121828;
+  --border: #283147;
+  --input: #34405b;
+  --primary: #b3a6dc;
+  --primary-foreground: #16122a;
+  --primary-hover: #c4b9e7;
+  --accent: #252c45;
+  --accent-foreground: #d5cdf0;
+  --ring: #b3a6dc;
+  --success: #86c2a2;
+  --success-subtle: #172a25;
+  --warning: #deb982;
+  --warning-subtle: #2c2418;
+  --destructive: #e592a3;
+  --destructive-subtle: #331c26;
+
+  --chart-1: #b3a6dc;
+  --chart-2: #7fa0d1;
+  --chart-3: #d596b4;
+  --chart-4: #86c2a2;
+  --chart-5: #deb982;
+  --chart-grid: #232b40;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.35);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-destructive: var(--destructive);
+  --color-destructive-subtle: var(--destructive-subtle);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
