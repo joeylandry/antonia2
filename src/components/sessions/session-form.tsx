@@ -173,7 +173,7 @@ export function SessionForm({ clientId, sessionId, initial, template, templateDa
         <p ref={errorRef} role="alert" className="rounded-md bg-destructive-subtle px-3 py-2 text-sm text-destructive">{showError}</p>
       ) : null}
 
-      <div className="grid gap-5 sm:grid-cols-[11rem_1fr]">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-[11rem_1fr]">
         <FormField label="Date" htmlFor="session_date">
           <Input id="session_date" type="date" value={draft.date} onChange={(e) => change((d) => ({ ...d, date: e.target.value }))} />
         </FormField>

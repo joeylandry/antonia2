@@ -23,7 +23,7 @@ export default async function ClientOverview({ params }: PageProps<"/clients/[id
   const archived = Boolean(client.archived_at);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr]">
       <div className="space-y-6">
         <Card>
           <CardHeader><CardTitle>Goal / focus</CardTitle></CardHeader>

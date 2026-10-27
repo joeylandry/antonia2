@@ -29,7 +29,7 @@ export function ClientForm({ action, client, cancelHref, submitLabel }: Props) {
         <p role="alert" className="rounded-md bg-destructive-subtle px-3 py-2 text-sm text-destructive">{state.error}</p>
       ) : null}
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <FormField label="Name" htmlFor="full_name" error={e.full_name} className="sm:col-span-2">
           <Input id="full_name" name="full_name" defaultValue={v("full_name")} autoComplete="off" autoFocus={!client} {...a11y("full_name")} />
         </FormField>
@@ -49,7 +49,7 @@ export function ClientForm({ action, client, cancelHref, submitLabel }: Props) {
         </FormField>
       </div>
 
-      <fieldset className="grid gap-5 sm:grid-cols-2">
+      <fieldset className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <legend className="mb-4 text-sm font-semibold">Schedule and reviews</legend>
         <FormField label="Session length (minutes)" htmlFor="session_length_minutes" error={e.session_length_minutes}>
           <Input id="session_length_minutes" name="session_length_minutes" inputMode="numeric" defaultValue={v("session_length_minutes")} {...a11y("session_length_minutes")} />

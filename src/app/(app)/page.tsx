@@ -81,7 +81,7 @@ export default async function TodayPage() {
         </div>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {reviews.length > 0 ? (
           <Section title="Reviews due" icon={CalendarClock} count={reviews.length}>
             <ul className="divide-y">
