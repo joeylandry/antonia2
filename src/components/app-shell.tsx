@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, LogOut, Users } from "lucide-react";
+import { Download, LayoutDashboard, LogOut, Users } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { signOut } from "@/app/(auth)/actions";
@@ -37,6 +37,9 @@ function UserMenu({ name, email }: { name: string; email: string }) {
       <DropdownMenuContent align="start" side="top">
         <DropdownMenuLabel>{email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <a href="/api/export" download><Download /> Export all data</a>
+        </DropdownMenuItem>
         <form action={signOut}>
           <DropdownMenuItem asChild>
             <button type="submit" className="w-full">
