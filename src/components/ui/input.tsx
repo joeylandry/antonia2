@@ -14,7 +14,7 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
 
 function Select({ className, children, ...props }: React.ComponentProps<"select">) {
   return (
-    <select className={cn(fieldClass, "h-9 appearance-none bg-no-repeat pr-8", className)} {...props}>
+    <select className={cn(fieldClass, "field-select h-9 appearance-none pr-8", className)} {...props}>
       {children}
     </select>
   );
