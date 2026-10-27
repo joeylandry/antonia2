@@ -1,6 +1,7 @@
 import "server-only";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { CLIENT_STATUS_LABEL, CLIENT_TYPE_LABEL } from "@/lib/clients";
 import type { Client, ClientOverview } from "@/lib/types";
 
 export type ClientSort = "name" | "review" | "recent";
@@ -16,8 +17,8 @@ export async function listClients(f: ClientFilters = {}): Promise<ClientOverview
   let query = supabase.from("client_overview").select("*");
 
   query = f.archived ? query.not("archived_at", "is", null) : query.is("archived_at", null);
-  if (f.status) query = query.eq("status", f.status);
-  if (f.type) query = query.eq("client_type", f.type);
+  if (f.status && f.status in CLIENT_STATUS_LABEL) query = query.eq("status", f.status);
+  if (f.type && f.type in CLIENT_TYPE_LABEL) query = query.eq("client_type", f.type);
   const q = f.q ? cleanSearch(f.q) : "";
   if (q) query = query.or(`full_name.ilike.%${q}%,primary_focus.ilike.%${q}%`);
 

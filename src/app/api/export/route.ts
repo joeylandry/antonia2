@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { fetchAll } from "@/lib/data/paginate";
 
 /** Downloads everything the signed-in trainer owns as JSON. Row-level security scopes every query. */
 export async function GET() {
@@ -7,20 +8,21 @@ export async function GET() {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
 
-  const [clients, exercises, goals, sessions] = await Promise.all([
-    supabase.from("clients").select("*").order("full_name"),
-    supabase.from("exercises").select("*").order("name"),
-    supabase.from("goals").select("*").order("created_at"),
-    supabase
-      .from("sessions")
-      .select("*, session_entries(*, entry_sets(*))")
-      .order("session_date")
-      .order("position", { referencedTable: "session_entries" }),
-  ]);
-  const failed = [clients, exercises, goals, sessions].find((r) => r.error);
-  if (failed) return NextResponse.json({ error: "Export failed" }, { status: 500 });
+  let clients, exercises, goals, sessions;
+  try {
+    [clients, exercises, goals, sessions] = await Promise.all([
+      fetchAll((from, to) => supabase.from("clients").select("*").order("full_name").order("id").range(from, to)),
+      fetchAll((from, to) => supabase.from("exercises").select("*").order("name").order("id").range(from, to)),
+      fetchAll((from, to) => supabase.from("goals").select("*").order("created_at").order("id").range(from, to)),
+      fetchAll((from, to) =>
+        supabase.from("sessions").select("*, session_entries(*, entry_sets(*))").order("session_date").order("id").range(from, to),
+      ),
+    ]);
+  } catch {
+    return NextResponse.json({ error: "Export failed" }, { status: 500 });
+  }
 
-  const body = { exported_at: new Date().toISOString(), version: 1, clients: clients.data, exercises: exercises.data, goals: goals.data, sessions: sessions.data };
+  const body = { exported_at: new Date().toISOString(), version: 1, clients, exercises, goals, sessions };
   return new NextResponse(JSON.stringify(body, null, 2), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
