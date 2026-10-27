@@ -6,11 +6,6 @@ test.skip(!email || !password, "Set E2E_EMAIL and E2E_PASSWORD to run against a 
 
 const name = `E2E Client ${Date.now()}`;
 
-test("protected routes redirect to sign-in", async ({ page }) => {
-  await page.goto("/clients");
-  await expect(page).toHaveURL(/\/login\?next=%2Fclients/);
-});
-
 test("sign in, create a client, log sessions, see progress, persist after reload, delete", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("Email").fill(email!);

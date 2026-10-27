@@ -49,7 +49,7 @@ npm run typecheck
 npm test           # unit tests (Vitest)
 npm run test:db    # applies the migrations to a throwaway Postgres and runs the row-level-security tests (needs PostgreSQL 15+ binaries)
 npm run build
-npm run test:e2e   # Playwright against a running app and a real Supabase project; see tests/e2e/README.md
+npm run test:e2e   # Playwright. public.spec.ts needs no backend; core-flow.spec.ts needs a real Supabase test project (tests/e2e/README.md)
 ```
 
 ## Deploying (Vercel)
