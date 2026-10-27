@@ -11,7 +11,8 @@ export async function listGoalsDueBy(date: string): Promise<DueGoal[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("goals")
-    .select("id, title, target_date, client_id, clients(full_name, archived_at)")
+    .select("id, title, target_date, client_id, clients!inner(full_name, archived_at)")
+    .is("clients.archived_at", null)
     .is("achieved_at", null)
     .not("target_date", "is", null)
     .lte("target_date", date)

@@ -57,7 +57,8 @@ export async function updateClientAction(id: string, _prev: ClientFormState, for
 export async function setArchivedAction(id: string, archived: boolean) {
   await requireTrainer();
   const supabase = await createClient();
-  const patch = archived ? { archived_at: new Date().toISOString(), status: "inactive" as const } : { archived_at: null, status: "active" as const };
+  // Status is left alone so a restored client comes back exactly as they were.
+  const patch = { archived_at: archived ? new Date().toISOString() : null };
   const { error } = await supabase.from("clients").update(patch).eq("id", id);
   if (error) throw new Error("Could not update the client");
   revalidatePath("/clients");

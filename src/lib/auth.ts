@@ -23,8 +23,12 @@ export const requireTrainer = cache(async (): Promise<Trainer> => {
 
 /** Only same-site relative paths are allowed as post-login destinations. */
 export function safeNext(value: FormDataEntryValue | string | null | undefined): string {
-  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//") || value.includes("\\")) {
+  if (typeof value !== "string" || !value.startsWith("/") || /[\u0000-\u0020\u007f\\]/.test(value)) return "/";
+  // Resolve like a browser would: anything that leaves this origin (e.g. "//host") is rejected.
+  try {
+    const url = new URL(value, "http://local.invalid");
+    return url.origin === "http://local.invalid" ? url.pathname + url.search + url.hash : "/";
+  } catch {
     return "/";
   }
-  return value;
 }

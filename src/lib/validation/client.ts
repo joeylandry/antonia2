@@ -2,14 +2,15 @@ import { z } from "zod";
 
 const emptyToUndefined = (v: unknown) => (typeof v === "string" && v.trim() === "" ? undefined : v);
 
-const optionalDate = z.preprocess(
-  emptyToUndefined,
-  z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Enter a valid date")
-    .refine((v) => !Number.isNaN(Date.parse(`${v}T00:00:00Z`)) && new Date(`${v}T00:00:00Z`).toISOString().startsWith(v), "Enter a valid date")
-    .optional(),
-);
+export const isoDate = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Enter a valid date")
+  .refine((v) => {
+    const t = Date.parse(`${v}T00:00:00Z`);
+    return !Number.isNaN(t) && new Date(t).toISOString().startsWith(v);
+  }, "Enter a valid date");
+
+const optionalDate = z.preprocess(emptyToUndefined, isoDate.optional());
 
 const optionalInt = (min: number, max: number, label: string) =>
   z.preprocess(

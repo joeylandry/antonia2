@@ -1,17 +1,21 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { fetchAll } from "@/lib/data/paginate";
 import type { Exercise, Goal } from "@/lib/types";
 import type { ProgressRow } from "@/lib/progress";
 
 export async function listProgressRows(clientId: string): Promise<ProgressRow[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("exercise_progress")
-    .select("exercise_id, session_id, session_date, top_weight, top_reps, top_duration_seconds, volume, set_count")
-    .eq("client_id", clientId)
-    .order("session_date", { ascending: true });
-  if (error) throw new Error(`Could not load progress: ${error.message}`);
-  return (data ?? []).map((r) => ({
+  const data = await fetchAll((from, to) =>
+    supabase
+      .from("exercise_progress")
+      .select("exercise_id, session_id, session_date, top_weight, top_reps, top_duration_seconds, volume, set_count")
+      .eq("client_id", clientId)
+      .order("session_date", { ascending: true })
+      .order("session_id", { ascending: true })
+      .range(from, to),
+  );
+  return data.map((r) => ({
     ...r,
     top_weight: r.top_weight == null ? null : Number(r.top_weight),
     volume: Number(r.volume),

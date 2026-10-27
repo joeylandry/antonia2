@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isoDate } from "@/lib/validation/client";
 
 const num = (min: number, max: number, int = false) => {
   let s = z.number().min(min).max(max);
@@ -24,7 +25,7 @@ export const entrySchema = z.object({
 export const sessionSchema = z.object({
   client_id: z.uuid(),
   session_id: z.uuid().nullable(),
-  session_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Choose a date"),
+  session_date: isoDate,
   focus: z.string().trim().max(200, "Keep the focus under 200 characters").nullable().transform((v) => v || null),
   notes: z.string().trim().max(20000).nullable().transform((v) => v || null),
   entries: z.array(entrySchema).min(1, "Add at least one exercise").max(60),

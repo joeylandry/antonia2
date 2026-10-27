@@ -49,3 +49,16 @@ describe("clientSchema", () => {
     expect(clientSchema.safeParse({ ...base, full_name: "   " }).success).toBe(false);
   });
 });
+
+describe("date validation", () => {
+  it("rejects impossible calendar dates in sessions and goals", async () => {
+    const { sessionSchema } = await import("./validation/session");
+    const { goalSchema } = await import("./validation/goal");
+    const entry = { name: "Squat", measure: "weight", per_side: false, notes: null, sets: [] };
+    const base = { client_id: "11111111-1111-4111-8111-111111111111", session_id: null, focus: null, notes: null, entries: [entry] };
+    expect(sessionSchema.safeParse({ ...base, session_date: "2026-02-31" }).success).toBe(false);
+    expect(sessionSchema.safeParse({ ...base, session_date: "2026-13-45" }).success).toBe(false);
+    expect(sessionSchema.safeParse({ ...base, session_date: "2026-02-28" }).success).toBe(true);
+    expect(goalSchema.safeParse({ title: "x", target_date: "2026-02-31" }).success).toBe(false);
+  });
+});
