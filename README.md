@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Antonia Training
 
-## Getting Started
+Client management and progress tracking for a personal trainer. Next.js (App Router) + TypeScript + Tailwind CSS 4,
+Supabase (Postgres and Auth), Recharts.
 
-First, run the development server:
+- **Today**: reviews due, clients who have gone quiet, goals coming up, prospects, recent sessions, one-step "Log session".
+- **Clients**: search, filter, sort; fast add (name only); profile with goal, notes, schedule, review date; archive and restore.
+- **Sessions**: one dated workout per entry, with sets, weights, notes per exercise and "Start from last session".
+- **Progress**: per-exercise charts (top weight, volume, best reps, hold time) with date ranges and goal lines.
+- **Goals**: free-text goals with optional measurable weight target; progress computed from logged sessions.
+- **Export**: *Export all data* in the account menu downloads everything as JSON.
 
+The reasoning behind the data model is in [`docs/product-analysis.md`](docs/product-analysis.md).
+
+## Setup
+
+### 1. Create the Supabase project
+1. Create a project at [supabase.com](https://supabase.com).
+2. Apply the migrations in `supabase/migrations/` in order: paste each file into the SQL editor, or use the Supabase CLI (`supabase link` then `supabase db push`).
+3. **Authentication → Sign In / Providers → Email**: turn **off** "Allow new users to sign up". Accounts are created by an administrator only.
+4. **Authentication → Users → Add user**: create Antonia's account (email + strong password, "Auto confirm"). To show her name in greetings, set user metadata `{"display_name": "Antonia"}` before the first sign-in, or update `trainer_profiles.display_name` afterwards.
+5. **Authentication → URL Configuration**: set *Site URL* to the production URL and add `https://<your-domain>/auth/confirm` (and `http://localhost:3000/auth/confirm` for development) to *Redirect URLs*.
+6. Password reset works with Supabase's default email template. If you customize the template, use the link
+   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/reset-password`.
+   For anything beyond a handful of emails, configure custom SMTP (Supabase's built-in sender is heavily rate limited).
+
+### 2. Environment variables
+Copy `.env.example` to `.env.local` (never commit it):
+
+| Variable | Value |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Project URL (Project Settings → API) |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | The publishable (anon) key. Safe in the browser because row-level security protects every table. |
+| `NEXT_PUBLIC_SITE_URL` | Public origin of the app, e.g. `https://app.example.com` |
+| `APP_TIMEZONE` | Optional IANA timezone used for "today" and the greeting. Default `America/New_York`. |
+
+The service-role key is **not** used and must not be added.
+
+### 3. Run
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Quality checks
+```bash
+npm run lint
+npm run typecheck
+npm test           # unit tests (Vitest)
+npm run test:db    # applies the migrations to a throwaway Postgres and runs the row-level-security tests (needs PostgreSQL 15+ binaries)
+npm run build
+npm run test:e2e   # Playwright. public.spec.ts needs no backend; core-flow.spec.ts needs a real Supabase test project (tests/e2e/README.md)
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploying (Vercel)
+1. Import the repository in Vercel (framework preset: Next.js).
+2. Add the environment variables above for Production (and Preview if wanted).
+3. Deploy, then confirm the Supabase *Site URL* and *Redirect URLs* match the deployed domain.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Security model
+- Authentication is Supabase Auth (email + password). There is no public sign-up.
+- `src/proxy.ts` refreshes the session and redirects signed-out visitors, but is only an optimistic check. Every page, server action and route handler re-verifies the user with `requireTrainer()` / `auth.getUser()`.
+- Authorization lives in the database: every table has `trainer_id` with row-level security (`trainer_id = auth.uid()`), and composite foreign keys prevent one trainer's rows from referencing another's. This is what lets more trainer accounts be added later without exposing each other's clients. `npm run test:db` proves it.
+- No client data is cached across users, and nothing sensitive is logged. Client records contain names, goals, notes and training data only (no contact details, by design).
+- Security headers (frame denial, nosniff, referrer policy, HSTS) are set in `next.config.ts`.
 
-## Learn More
+## Backups and data safety
+- Clients are archived rather than deleted. Permanent deletion requires an archived client and typing their name.
+- Use *Export all data* for a portable JSON copy. Supabase provides automatic backups on paid plans; enable them for production.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Known limitations
+- Weights are in pounds only.
+- Single-trainer UI: the schema supports more trainers, but there is no invite or admin screen.
+- No client portal, scheduling or billing (not in the current workflow).
+- No import from the existing Excel workbook yet.
